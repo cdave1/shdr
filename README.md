@@ -1,5 +1,8 @@
 # shdr
 
+![Shader example 1](https://github.com/cdave1/shdr/raw/master/test.png)
+![Shader example 2](https://github.com/cdave1/shdr/raw/master/testPattern.png)
+
 Emulator for glsl fragment shaders in possibly the dumbest way you could imagine:
 * Fake glsl code is actually just javascript, so you can't copy and paste glsl code in.
 * Run on the CPU without threads or parallelization.
