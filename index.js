@@ -3,20 +3,28 @@
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
 
+global.min = Math.min;
+
+global.max = Math.max;
+
+global.sin = Math.sin;
+
+global.cos = Math.cos;
+
+global.tan = Math.tan;
+
+global.ceil = Math.ceil;
+
+global.floor = Math.floor;
+
+global.sqrt = Math.sqrt;
+
 global.sign = function(a) {
     return (a < 0) ? -1.0 : (a == 0.0) ? 0.0 : 1.0;
 }
 
 global.fract = function(a) {
     return a - Math.floor(a);
-}
-
-global.min = (a, b) => {
-    return Math.min(a, b)
-}
-
-global.max = (a, b) => {
-    return Math.max(a, b);
 }
 
 global.clamp = (x, lo, hi) => {
@@ -27,31 +35,16 @@ global.length = (a, b) => {
     return Math.sqrt((a * a) + (b * b));
 }
 
-global.sin = (x) => {
-    return Math.sin(x);
-}
-
-global.cos = (x) => {
-    return Math.cos(x);
-}
-
-global.tan = (x) => {
-    return Math.tan(x);
-}
-
-global.ceil = (x) => {
-    return Math.ceil(x);
-}
-
-global.sqrt = (x) => {
-    return Math.sqrt(x);
-}
-
 global.iResolution = { x: 1200.0, y: 1200.0 };
 
 global.iGlobalTime = 0.5;
 
+global.vec4 = (x, y, z, w) => {
+    return [x, y, z, w];
+}
+
 function shdr(func, exportLocation) {
+    var _exportLocation = exportLocation || "./output.png";
     var size = {width: iResolution.x, height: iResolution.y };
     var png = new PNG({width: size.width, height: size.height});
 
@@ -68,8 +61,8 @@ function shdr(func, exportLocation) {
         }
     }
 
-    png.pack().pipe(fs.createWriteStream(exportLocation));
-    console.log("Exported png to", exportLocation);
+    png.pack().pipe(fs.createWriteStream(_exportLocation));
+    console.log("Exported png to", _exportLocation);
 }
 
 module.exports = shdr;
