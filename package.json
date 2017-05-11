@@ -1,0 +1,22 @@
+{
+  "name": "shdr",
+  "version": "1.0.0",
+  "description": "Slow ass CPU shaders in javascript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdave1/shdr.git"
+  },
+  "author": "David Petrie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cdave1/shdr/issues"
+  },
+  "homepage": "https://github.com/cdave1/shdr#readme",
+  "dependencies": {
+    "pngjs": "^3.2.0"
+  }
+}
