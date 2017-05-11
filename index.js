@@ -47,12 +47,12 @@ global.sqrt = (x) => {
     return Math.sqrt(x);
 }
 
-global.iResolution = { x: 2048.0, y: 2048.0 };
+global.iResolution = { x: 1200.0, y: 1200.0 };
 
 global.iGlobalTime = 0.5;
 
 function shdr(func, exportLocation) {
-    var size = {width: 2048.0, height: 2048.0 };
+    var size = {width: iResolution.x, height: iResolution.y };
     var png = new PNG({width: size.width, height: size.height});
 
     for (var y = 0.0; y < size.height; y += 1.0) {
@@ -69,6 +69,7 @@ function shdr(func, exportLocation) {
     }
 
     png.pack().pipe(fs.createWriteStream(exportLocation));
+    console.log("Exported png to", exportLocation);
 }
 
 module.exports = shdr;

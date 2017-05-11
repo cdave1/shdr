@@ -1,7 +1,7 @@
 {
   "name": "shdr",
-  "version": "1.0.0",
-  "description": "Slow ass CPU shaders in javascript.",
+  "version": "0.0.1",
+  "description": "Emulate glsl shaders on the CPU in javascript.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
