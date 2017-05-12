@@ -5,6 +5,33 @@ An experimental emulator for glsl fragment shaders that runs on the CPU.  Useful
 ![Shader example 1](https://github.com/cdave1/shdr/raw/master/img/test.png)
 ![Shader example 2](https://github.com/cdave1/shdr/raw/master/img/testPattern.png)
 
+# Usage
+
+Create a glsl fragment shader in a file, like the following:
+
+    #version 330
+
+    uniform vec2 iResolution;
+    uniform float iGlobalTime;
+    varying vec2 fragCoord;
+
+    void main() {
+        vec2 uv = fragCoord.xy / iResolution.xy;
+        gl_fragColor = vec4(uv,0.5+0.5*sin(iGlobalTime),1.0);
+    }
+
+And then evaluate as follows:
+
+    const shdr = require('shdr');
+    var shaderFileLocation = 'path/to/shader.glsl';
+    var exportFileLocation = 'path/to/export.png';
+    shdr.eval(shaderFileLocation, exportFileLocation);
+
+The shader output will be exported to a png file like this:
+
+![Shader example 1](https://github.com/cdave1/shdr/raw/master/img/test.png)
+
+
 # Plans
 
 The usual method of debugging glsl is to dump your suspect variable out to gl_FragColor.  This gives you fast visual feedback for what your values are and where they might be going wrong.  It is usually the best method for debugging glsl.
@@ -18,53 +45,17 @@ This library may also be useful as a server-based program that can be used to ge
 
 # Current Limitations
 
-The goal of shdr is to allow complete evaluation of glsl in javascript.  
-
-
-
-    function test(fragColor, fragCoord) {
-        fragColor[0] = fragCoord.x / iResolution.x;
-        fragColor[1] = fragCoord.y / iResolution.y;
-        fragColor[2] = 0.5 + 0.5 * sin(iGlobalTime);
-        fragColor[3] = 1.0;
-    }
-
-There are some additional limitations:
 * Runs on the CPU without threads or parallelization.
-* glsl library functions are just global wrappers around basic javascript Math library functions.
+* glsl is evaluated to javascript, but the javascript does not quite match the glsl, so it can be hard to match up line numbers when an error is produced.
 * Only runs one frame at a time.
 * Slow as hell.
 * No swizzling or overloading.
 * Dumps output to png.
 
 
-# Example
-
-Standard test shader (test.js):
-
-    const shdr = require('./index');
-
-    function test(fragColor, fragCoord) {
-        fragColor[0] = fragCoord.x / iResolution.x;
-        fragColor[1] = fragCoord.y / iResolution.y;
-        fragColor[2] = 0.5 + 0.5 * sin(iGlobalTime);
-        fragColor[3] = 1.0;
-    }
-
-    shdr(test, 'test.png');
-
-Then:
-
-    node test
-
-The resulting png will look like this:
-
-![Shader example 1](https://github.com/cdave1/shdr/raw/master/img/test.png)
-
-
 # TODO
 
-* Be able to load glsl code directly by supporting all the library functions, swizzling methods, constructors, etc.
+* (DONE) Be able to load glsl code directly by supporting all the library functions, swizzling methods, constructors, etc.
 * Support for multiple frames.
 * Use all of shadertoy's global variables.
 * Pipe shader functions together.

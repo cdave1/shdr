@@ -117,7 +117,7 @@ function runShaderSource(shaderSource, opts) {
 shdr.eval = function(glslPath, opts) {
     var GLSL = require('glsl-transpiler');
     var glslify = require('glslify');
-    var source = glslify('./glsl/galaxy.glsl'); //seventies.glsl');
+    var source = glslify(glslPath); //seventies.glsl');
 
     var compile = GLSL({
         uniform: function (name) {
