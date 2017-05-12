@@ -1,13 +1,13 @@
-const shdr = require('./index');
+const shdr = require('../index');
 
 //
 // This shader function is converted from "70s Wallpaper" from Shane on shadertoy.com
 // https://www.shadertoy.com/view/ls33DN
 //
-function TestPattern(fragColor, fragCoord) {
+function TestPattern() { //fragColor, fragCoord) {
     var _x = fragCoord.x / 50.0;
     var _y = fragCoord.y / 50.0;
-    
+
     _x *= sign(cos(length(ceil(_x), ceil(_y)) * 99.0));
     _x = fract(_x);
     _y = fract(_y);
@@ -19,4 +19,4 @@ function TestPattern(fragColor, fragCoord) {
     });
 }
 
-shdr(TestPattern, 'testPattern.png');
+shdr.evalFunction(TestPattern, 'testPattern.png');

@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
+const vm = require('vm');
+
+var shdr = {};
 
 global.min = Math.min;
 
@@ -35,25 +38,123 @@ global.length = (a, b) => {
     return Math.sqrt((a * a) + (b * b));
 }
 
-global.iResolution = { x: 1200.0, y: 1200.0 };
+shdr.shdrHeadless = function(exportLocation) {
+    var _exportLocation = exportLocation || "./output.png";
+    var width   = 256
+    var height  = 256
+    var gl = require('headless-gl')(width, height, { preserveDrawingBuffer: true })
 
-global.iGlobalTime = 0.5;
+    //Clear screen to red
+    gl.clearColor(1, 0, 0, 1)
+    gl.clear(gl.COLOR_BUFFER_BIT)
 
-global.vec4 = (x, y, z, w) => {
-    return [x, y, z, w];
+    //Write output as a PPM formatted image
+    var pixels = new Uint8Array(width * height * 4)
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+
+    var png = new PNG({width: width, height: height});
+    for(var i=0; i<pixels.length; i+=4) {
+        for(var j=0; j<3; ++j) {
+            png.data[i+j]   = pixels[i+j];
+        }
+        png.data[i+3] = 255;
+    }
+
+    png.pack().pipe(fs.createWriteStream(_exportLocation));
+    console.log("Exported png to", _exportLocation);
 }
 
-function shdr(func, exportLocation) {
-    var _exportLocation = exportLocation || "./output.png";
-    var size = {width: iResolution.x, height: iResolution.y };
-    var png = new PNG({width: size.width, height: size.height});
 
-    for (var y = 0.0; y < size.height; y += 1.0) {
-        for (var x = 0.0; x < size.width; x += 1.0) {
-            var color = [0.0, 0.0, 0.0, 0.0];
-            func(color, {x: x, y: y});
+global.uniforms = {};
+global.varyings = {};
+global.uniforms.iResolution = [1.0, 1.0];
+global.uniforms.iGlobalTime = 0.5;
+
+global.gl_fragColor = [0, 0, 0, 0];
+global.fragCoord = {x: 0, y: 0};
+
+function runShaderSource(shaderSource, opts) {
+    var _exportLocation = opts && opts.exportLocation || "./output.png";
+    var _width = opts && opts.width || 512.0;
+    var _height = opts && opts.height || 512.0;
+
+    uniforms.iResolution = [_width, _height];
+    uniforms.iGlobalTime = 0.5;
+
+    console.log(shaderSource);
+
+    var evalResult = vm.runInThisContext(shaderSource);
+
+    gl_fragColor = [0, 0, 0, 0];
+    fragCoord = {x: 0, y: 0};
+
+    var png = new PNG({width: _width, height: _height});
+
+    for (var y = 0.0; y < _height; y += 1.0) {
+        for (var x = 0.0; x < _width; x += 1.0) {
+            global.texture_coordinate = [x / _width, y / _height];
             
-            const idx = (size.width * y + x) * 4;
+            //gl_fragColor = [0, 0, 0, 0];
+            //fragCoord = {x: x, y: y };
+            fragCoord = [x, y];
+            main();
+            //console.log(global.varyings.fragCoord);
+            var color = gl_fragColor;
+            
+            const idx = (_width * y + x) * 4;
+            png.data[idx]   = 255 * color[0];
+            png.data[idx+1] = 255 * color[1];
+            png.data[idx+2] = 255 * color[2];
+            png.data[idx+3] = 255;
+        }
+    }
+
+    png.pack().pipe(fs.createWriteStream(_exportLocation));
+    console.log("Exported png to", _exportLocation);
+}
+
+
+shdr.eval = function(glslPath, opts) {
+    var GLSL = require('glsl-transpiler');
+    var glslify = require('glslify');
+    var source = glslify('./glsl/galaxy.glsl'); //seventies.glsl');
+
+    var compile = GLSL({
+        uniform: function (name) {
+            return `uniforms.${name}`;
+        },
+        attribute: function (name) {
+            return `attributes.${name}`;
+        },
+        varying: function (name) {
+            return `varyings.${name}`;
+        }
+    });
+
+    var result = compile(source);
+    return runShaderSource(result, opts);
+}
+
+
+
+shdr.evalFunction = function(func, opts) {
+    var _exportLocation = opts && opts.exportLocation || "./output.png";
+    var _width = opts && opts.width || 512.0;
+    var _height = opts && opts.height || 512.0;
+
+    var png = new PNG({width: _width, height: _height});
+
+    global.fragColor = [0, 0, 0, 0];
+    global.fragCoord = {x: 0, y: 0};
+
+    for (var y = 0.0; y < _height; y += 1.0) {
+        for (var x = 0.0; x < _width; x += 1.0) {
+            fragCoord = {x: x, y: y };
+            func();
+
+            var color = fragColor;
+            
+            const idx = (_width * y + x) * 4;
             png.data[idx]   = 255 * color[0];
             png.data[idx+1] = 255 * color[1];
             png.data[idx+2] = 255 * color[2];

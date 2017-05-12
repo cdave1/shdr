@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/cdave1/shdr#readme",
   "dependencies": {
+    "gl": "^4.0.3",
+    "glsl-transpiler": "^1.5.7",
+    "glslify": "^6.0.2",
     "pngjs": "^3.2.0"
   }
 }
