@@ -32,9 +32,9 @@ The shader output will be exported to a png file like this:
 ![Shader example 1](https://github.com/cdave1/shdr/raw/master/img/test.png)
 
 
-# Plans
+# Motivations
 
-The usual method of debugging glsl is to dump your suspect variable out to gl_FragColor.  This gives you fast visual feedback for what your values are and where they might be going wrong.  It is usually the best method for debugging glsl.
+To debug glsl, the usual method is to simply dump suspect variables out to gl_FragColor.  This provides fast visual feedback for where things might be going wrong.  It is usually the best method for debugging glsl, and is particularly useful in conjunction with a tool like [ShaderToy](https://www.shadertoy.com).
 
 This debugging method stops being effective when your shaders become more complex, particularly when you need to debug multiple variables.  Sometimes, you just want to look at your variables in a standard debugger, or to dump them out to the console.
 
