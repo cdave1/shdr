@@ -1,9 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-const PNG = require('pngjs').PNG;
-const vm = require('vm');
-
 var shdr = {};
 
 global.min = Math.min;
@@ -74,6 +70,7 @@ global.gl_fragColor = [0, 0, 0, 0];
 global.fragCoord = {x: 0, y: 0};
 
 function runShaderSource(shaderSource, opts) {
+    const vm = require('vm');
     var _exportLocation = opts && opts.exportLocation || "./output.png";
     var _width = opts && opts.width || 512.0;
     var _height = opts && opts.height || 512.0;
@@ -138,32 +135,49 @@ shdr.eval = function(glslPath, opts) {
 
 
 shdr.evalFunction = function(func, opts) {
-    var _exportLocation = opts && opts.exportLocation || "./output.png";
+    var _exportLocation = opts && opts.exportLocation || null;
     var _width = opts && opts.width || 512.0;
     var _height = opts && opts.height || 512.0;
 
-    var png = new PNG({width: _width, height: _height});
-
     global.fragColor = [0, 0, 0, 0];
     global.fragCoord = {x: 0, y: 0};
+
+    uniforms.iResolution = [_width, _height];
+    uniforms.iGlobalTime += 0.2;
+
+    var buffer = new Array(_width * _height * 4);
 
     for (var y = 0.0; y < _height; y += 1.0) {
         for (var x = 0.0; x < _width; x += 1.0) {
             fragCoord = {x: x, y: y };
             func();
-
             var color = fragColor;
             
             const idx = (_width * y + x) * 4;
-            png.data[idx]   = 255 * color[0];
-            png.data[idx+1] = 255 * color[1];
-            png.data[idx+2] = 255 * color[2];
-            png.data[idx+3] = 255;
+            buffer[idx] = 255 * color[0];
+            buffer[idx+1] = 255 * color[1];
+            buffer[idx+2] = 255 * color[2];
+            buffer[idx+3] = 255;
         }
     }
 
-    png.pack().pipe(fs.createWriteStream(_exportLocation));
-    console.log("Exported png to", _exportLocation);
+    if (_exportLocation) {
+        const fs = require('fs');
+
+        var png = new PNG({width: _width, height: _height});
+
+        for (idx = 0; idx < buffer.length; idx +=4) {
+            png.data[idx]   = buffer[idx];
+            png.data[idx+1] = buffer[idx+1];
+            png.data[idx+2] = buffer[idx+2];
+            png.data[idx+3] = buffer[idx+3];
+        }
+
+        png.pack().pipe(fs.createWriteStream(_exportLocation));
+        console.log("Exported png to", _exportLocation);
+    }
+
+    return buffer;
 }
 
 module.exports = shdr;
