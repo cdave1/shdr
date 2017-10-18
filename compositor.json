@@ -1,0 +1,88 @@
+{
+  "name": "cdave1/shdr",
+  "version": "0.1.4",
+  "libraries": {
+    "xv": "^1.1.25"
+  },
+  "title": "Just Testing",
+  "branch": "",
+  "style": {
+    "name": "Swiss",
+    "componentSet": {
+      "nav": "nav/BasicNav",
+      "header": "header/SwissHeader",
+      "article": "article/SwissArticle",
+      "footer": "footer/BasicFooter"
+    },
+    "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "heading": {
+      "fontWeight": 700,
+      "letterSpacing": "-0.01em"
+    },
+    "layout": {
+      "fluid": true
+    },
+    "colors": {
+      "text": "#000",
+      "background": "#fff",
+      "primary": "#05a",
+      "secondary": "#444",
+      "highlight": "#f30",
+      "border": "#ccc",
+      "muted": "#eee"
+    }
+  },
+  "content": [
+    {
+      "component": "nav",
+      "links": [
+        {
+          "href": "https://github.com/cdave1/shdr",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://npmjs.com/package/shdr",
+          "text": "npm"
+        }
+      ]
+    },
+    {
+      "component": "header",
+      "heading": "shdr",
+      "subhead": "Run shaders on the CPU to debug them easily (in javascript!!)",
+      "children": [
+        {
+          "component": "ui/TweetButton",
+          "text": "shdr: Run shaders on the CPU to debug them easily (in javascript!!)",
+          "url": ""
+        },
+        {
+          "component": "ui/GithubButton",
+          "user": "cdave1",
+          "repo": "shdr"
+        }
+      ],
+      "text": "v0.0.1"
+    },
+    {
+      "component": "article",
+      "metadata": {
+        "source": "github.readme"
+      },
+      "html": "\n<p>An experimental emulator for glsl fragment shaders that runs on the CPU.  Useful when standard GPU debugging methods won&apos;t cut it, and you want to inspect variables on a standard debugger on the CPU.  The shader output is exported to a png.</p>\n<p><img src=\"https://github.com/cdave1/shdr/raw/master/img/test.png\">\n<img src=\"https://github.com/cdave1/shdr/raw/master/img/testPattern.png\"></p>\n<h1>Usage</h1>\n<p>Create a glsl fragment shader in a file, like the following:</p>\n<pre><span class=\"hljs-meta\">#version 330</span>\n\n<span class=\"hljs-keyword\">uniform</span> <span class=\"hljs-type\">vec2</span> iResolution;\n<span class=\"hljs-keyword\">uniform</span> <span class=\"hljs-type\">float</span> iGlobalTime;\n<span class=\"hljs-keyword\">varying</span> <span class=\"hljs-type\">vec2</span> fragCoord;\n\n<span class=\"hljs-type\">void</span> main() {\n    <span class=\"hljs-type\">vec2</span> uv = fragCoord.xy / iResolution.xy;\n    gl_fragColor = <span class=\"hljs-type\">vec4</span>(uv,<span class=\"hljs-number\">0.5</span>+<span class=\"hljs-number\">0.5</span>*<span class=\"hljs-built_in\">sin</span>(iGlobalTime),<span class=\"hljs-number\">1.0</span>);\n}</pre><p>And then evaluate as follows:</p>\n<pre><span class=\"hljs-keyword\">const</span> shdr = <span class=\"hljs-keyword\">require</span>(<span class=\"hljs-string\">&apos;shdr&apos;</span>);\n<span class=\"hljs-keyword\">var</span> shaderFileLocation = <span class=\"hljs-string\">&apos;path/to/shader.glsl&apos;</span>;\n<span class=\"hljs-keyword\">var</span> exportFileLocation = <span class=\"hljs-string\">&apos;path/to/export.png&apos;</span>;\nshdr.<span class=\"hljs-keyword\">eval</span>(shaderFileLocation, exportFileLocation);</pre><p>The shader output will be exported to a png file like this:</p>\n<p><img src=\"https://github.com/cdave1/shdr/raw/master/img/test.png\"></p>\n<h1>Motivations</h1>\n<p>To debug glsl, the usual method is to simply dump suspect variables out to gl_FragColor.  This provides fast visual feedback for where things might be going wrong.  It is usually the best method for debugging glsl, and is particularly useful in conjunction with a tool like <a href=\"https://www.shadertoy.com\">ShaderToy</a>.</p>\n<p>This debugging method stops being effective when your shaders become more complex, particularly when you need to debug multiple variables.  Sometimes, you just want to look at your variables in a standard debugger, or to dump them out to the console.</p>\n<p>I think the Visual Studio Code javascript debugger is the best available for any IDE or programming language, and it&apos;s what I&apos;ve been testing this on.  Javascript is also a good choice as an emulation language, since it already has very similar syntax to glsl.</p>\n<p>This library may also be useful as a server-based program that can be used to generate static images with glsl, particularly in cases when an OpenGL context is impossible to create.</p>\n<h1>Current Limitations</h1>\n<ul>\n<li>Runs on the CPU without threads or parallelization.</li>\n<li>glsl is evaluated to javascript, but the javascript does not quite match the glsl, so it can be hard to match up line numbers when an error is produced.</li>\n<li>Only runs one frame at a time.</li>\n<li>Slow as hell.</li>\n<li>No swizzling or overloading.</li>\n<li>Dumps output to png.</li>\n</ul>\n<h1>TODO</h1>\n<ul>\n<li>(DONE) Be able to load glsl code directly by supporting all the library functions, swizzling methods, constructors, etc.</li>\n<li>Support for multiple frames.</li>\n<li>Use all of shadertoy&apos;s global variables.</li>\n<li>Pipe shader functions together.</li>\n</ul>\n"
+    },
+    {
+      "component": "footer",
+      "links": [
+        {
+          "href": "https://github.com/cdave1/shdr",
+          "text": "GitHub"
+        },
+        {
+          "href": "https://github.com/cdave1",
+          "text": "cdave1"
+        }
+      ]
+    }
+  ]
+}
