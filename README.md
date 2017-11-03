@@ -1,5 +1,9 @@
 # shdr
 
+LIVE DEMO: https://shdr.now.sh/
+
+# About
+
 An experimental emulator for glsl fragment shaders that runs on the CPU.  Useful when standard GPU debugging methods won't cut it, and you want to inspect variables on a standard debugger on the CPU.  The shader output is exported to a png.
 
 ![Shader example 1](https://github.com/cdave1/shdr/raw/master/img/test.png)
